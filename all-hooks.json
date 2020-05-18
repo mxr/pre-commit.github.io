@@ -2,16 +2,12 @@
     "https://github.com/pre-commit/pre-commit-hooks": [
         {
             "id": "autopep8-wrapper",
-            "name": "autopep8 wrapper",
-            "description": "This is deprecated, use pre-commit/mirrors-autopep8 instead.",
-            "entry": "autopep8-wrapper",
+            "name": "autopep8 wrapper (removed)",
+            "description": "(removed) use pre-commit/mirrors-autopep8 instead.",
+            "entry": "pre-commit-hooks-removed autopep8-wrapper autopep8 https://github.com/pre-commit/mirrors-autopep8",
             "language": "python",
-            "types": [
-                "python"
-            ],
-            "args": [
-                "-i"
-            ]
+            "always_run": true,
+            "pass_filenames": false
         },
         {
             "id": "check-added-large-files",
@@ -37,7 +33,7 @@
             "entry": "check-byte-order-marker",
             "language": "python",
             "types": [
-                "python"
+                "text"
             ]
         },
         {
@@ -76,6 +72,11 @@
             "types": [
                 "text",
                 "executable"
+            ],
+            "stages": [
+                "commit",
+                "push",
+                "manual"
             ]
         },
         {
@@ -116,6 +117,16 @@
             "language": "python",
             "types": [
                 "symlink"
+            ]
+        },
+        {
+            "id": "check-toml",
+            "name": "Check Toml",
+            "description": "This hook checks toml files for parseable syntax.",
+            "entry": "check-toml",
+            "language": "python",
+            "types": [
+                "toml"
             ]
         },
         {
@@ -223,14 +234,12 @@
         },
         {
             "id": "flake8",
-            "name": "Flake8",
-            "description": "This hook runs flake8.",
-            "entry": "flake8",
+            "name": "Flake8 (removed)",
+            "description": "(removed) use gitlab.com/pycqa/flake8 instead.",
+            "entry": "pre-commit-hooks-removed flake8 flake8 https://gitlab.com/pycqa/flake8",
             "language": "python",
-            "types": [
-                "python"
-            ],
-            "require_serial": true
+            "always_run": true,
+            "pass_filenames": false
         },
         {
             "id": "forbid-new-submodules",
@@ -267,13 +276,12 @@
         },
         {
             "id": "pyflakes",
-            "name": "Pyflakes (DEPRECATED, use flake8)",
-            "description": "This hook runs pyflakes. (This is deprecated, use flake8).",
-            "entry": "pyflakes",
+            "name": "Pyflakes (removed)",
+            "description": "(removed) use gitlab.com/pycqa/flake8 instead.",
+            "entry": "pre-commit-hooks-removed pyflakes flake8 https://gitlab.com/pycqa/flake8",
             "language": "python",
-            "types": [
-                "python"
-            ]
+            "always_run": true,
+            "pass_filenames": false
         },
         {
             "id": "requirements-txt-fixer",
@@ -299,6 +307,11 @@
             "language": "python",
             "types": [
                 "text"
+            ],
+            "stages": [
+                "commit",
+                "push",
+                "manual"
             ]
         }
     ],
@@ -314,6 +327,7 @@
             "args": [
                 "-i"
             ],
+            "require_serial": false,
             "additional_dependencies": []
         }
     ],
@@ -355,8 +369,9 @@
                 "javascript"
             ],
             "args": [],
+            "require_serial": false,
             "additional_dependencies": [
-                "eslint@5.12.1"
+                "eslint@7.0.0"
             ]
         }
     ],
@@ -380,8 +395,12 @@
             "name": "isort",
             "entry": "isort",
             "language": "python",
-            "files": "\\.py$",
-            "args": []
+            "types": [
+                "python"
+            ],
+            "args": [],
+            "require_serial": false,
+            "additional_dependencies": []
         }
     ],
     "https://github.com/pre-commit/mirrors-jshint": [
@@ -394,8 +413,9 @@
                 "javascript"
             ],
             "args": [],
+            "require_serial": false,
             "additional_dependencies": [
-                "jshint@2.9.7"
+                "jshint@2.11.1"
             ]
         }
     ],
@@ -412,6 +432,7 @@
                 "--ignore-missing-imports",
                 "--scripts-are-modules"
             ],
+            "require_serial": true,
             "additional_dependencies": []
         }
     ],
@@ -425,19 +446,7 @@
                 "puppet"
             ],
             "args": [],
-            "additional_dependencies": []
-        }
-    ],
-    "https://github.com/pre-commit/mirrors-pylint": [
-        {
-            "id": "pylint",
-            "name": "pylint",
-            "entry": "pylint",
-            "language": "python",
-            "types": [
-                "python"
-            ],
-            "args": [],
+            "require_serial": false,
             "additional_dependencies": []
         }
     ],
@@ -464,6 +473,7 @@
                 "scss"
             ],
             "args": [],
+            "require_serial": false,
             "additional_dependencies": []
         }
     ],
@@ -479,15 +489,16 @@
             "args": [
                 "-i"
             ],
+            "require_serial": false,
             "additional_dependencies": []
         }
     ],
     "https://github.com/pre-commit/pygrep-hooks": [
         {
             "id": "python-check-blanket-noqa",
-            "name": "Check blanket noqa",
+            "name": "check blanket noqa",
             "description": "Enforce that `noqa` annotations always occur with specific codes",
-            "entry": "# noqa(?!: )",
+            "entry": "(?i)# noqa(?!: )",
             "language": "pygrep",
             "types": [
                 "python"
@@ -496,9 +507,19 @@
         {
             "id": "python-check-mock-methods",
             "name": "check for not-real mock methods",
-            "description": "Prevent a common mistake of `assert mck.not_called()` or `assert mck.called_once_with(...)`",
+            "description": "Prevent common mistakes of `assert mck.not_called()`, `assert mck.called_once_with(...)` and `mck.assert_called`.",
             "language": "pygrep",
-            "entry": "assert .*\\.(not_called|called_)",
+            "entry": "(?x)(\n    assert .*\\.(\n        not_called|\n        called_\n    )|\n    # ''.join(rf'(?<!\\b{s})' for s in dir(mock) if s.endswith('Mock')))\n    (?<!\\bAsyncMock)(?<!\\bMagicMock)(?<!\\bMock)(?<!\\bNonCallableMagicMock)(?<!\\bNonCallableMock)(?<!\\bPropertyMock)\n    \\.assert_(\n        any_call|\n        called|\n        called_once|\n        called_once_with|\n        called_with|\n        has_calls|\n        not_called\n    )($|[^(\\w])\n)\n",
+            "types": [
+                "python"
+            ]
+        },
+        {
+            "id": "python-no-eval",
+            "name": "check for eval()",
+            "description": "A quick check for the `eval()` built-in function",
+            "entry": "\\beval\\(",
+            "language": "pygrep",
             "types": [
                 "python"
             ]
@@ -507,7 +528,7 @@
             "id": "python-no-log-warn",
             "name": "use logger.warning(",
             "description": "A quick check for the deprecated `.warn()` method of python loggers",
-            "entry": "\\.warn\\(",
+            "entry": "(?<!warnings)\\.warn\\(",
             "language": "pygrep",
             "types": [
                 "python"
@@ -517,7 +538,7 @@
             "id": "python-use-type-annotations",
             "name": "type annotations not comments",
             "description": "Enforce that python3.6+ type annotations are used instead of type comments",
-            "entry": "# type(?!: *ignore *($|#))",
+            "entry": "# type(?!: *ignore([^a-zA-Z0-9]|$))",
             "language": "pygrep",
             "types": [
                 "python"
@@ -527,10 +548,20 @@
             "id": "rst-backticks",
             "name": "rst ``code`` is two backticks",
             "description": "Detect common mistake of using single backticks when writing rst",
-            "entry": " `[^`]+[^_]`([^_]|$)",
+            "entry": "(^| )`[^`]+[^_]`([^_]|$)",
             "language": "pygrep",
             "types": [
                 "rst"
+            ]
+        },
+        {
+            "id": "text-unicode-replacement-char",
+            "name": "no unicode replacement chars",
+            "description": "Forbid files which have a UTF-8 Unicode replacement character",
+            "entry": "\ufffd",
+            "language": "pygrep",
+            "types": [
+                "text"
             ]
         }
     ],
@@ -645,7 +676,32 @@
             "entry": "blacken-docs",
             "language": "python",
             "language_version": "python3",
-            "files": "\\.(rst|md|markdown)"
+            "files": "\\.(rst|md|markdown|py|tex)$"
+        }
+    ],
+    "https://github.com/asottile/dead": [
+        {
+            "id": "dead",
+            "name": "detect dead code",
+            "description": "dead simple python dead code detection",
+            "entry": "dead",
+            "pass_filenames": false,
+            "language": "python",
+            "language_version": "python3",
+            "types": [
+                "python"
+            ]
+        }
+    ],
+    "https://github.com/asottile/setup-cfg-fmt": [
+        {
+            "id": "setup-cfg-fmt",
+            "name": "setup-cfg-fmt",
+            "description": "apply a consistent format to `setup.cfg` files",
+            "entry": "setup-cfg-fmt",
+            "language": "python",
+            "language_version": "python3",
+            "files": "(^|/)setup\\.cfg$"
         }
     ],
     "https://github.com/asottile/cheetah_lint": [
@@ -681,7 +737,7 @@
         {
             "id": "php-lint",
             "name": "PHP Syntax Check (Quick)",
-            "description": "Runs php -l on all staged files. Exits when it hits the first errored file",
+            "description": "Runs php -l on all staged PHP files. Exits when it hits the first errored file",
             "entry": "php -l",
             "language": "system",
             "files": "\\.php$"
@@ -697,7 +753,7 @@
         {
             "id": "php-cs",
             "name": "PHP Codesniffer",
-            "description": "Run php codesniffer against all staged files.",
+            "description": "Run php codesniffer against all staged PHP files.",
             "entry": "pre_commit_hooks/php-cs.sh",
             "language": "script",
             "files": "\\.php$"
@@ -705,7 +761,7 @@
         {
             "id": "php-cbf",
             "name": "PHP Codesniffer (Code Beutifier and Formatter)",
-            "description": "Run php codesniffer against all staged files.",
+            "description": "Run php codesniffer against all staged PHP files.",
             "entry": "pre_commit_hooks/php-cbf.sh",
             "language": "script",
             "files": "\\.php$"
@@ -713,8 +769,16 @@
         {
             "id": "php-cs-fixer",
             "name": "PHP Coding Standards Fixer",
-            "description": "Run php coding standards fixer against all staged files.",
+            "description": "Run php coding standards fixer against all staged PHP files.",
             "entry": "pre_commit_hooks/php-cs-fixer.sh",
+            "language": "script",
+            "files": "\\.php$"
+        },
+        {
+            "id": "php-stan",
+            "name": "PHPStan",
+            "description": "Run PHPStan against all staged PHP files.",
+            "entry": "pre_commit_hooks/php-stan.sh",
             "language": "script",
             "files": "\\.php$"
         }
@@ -837,9 +901,6 @@
             "language": "python",
             "types": [
                 "text"
-            ],
-            "additional_dependencies": [
-                "chardet"
             ]
         },
         {
@@ -898,15 +959,18 @@
             "entry": "pre_commit_hooks/shfmt",
             "types": [
                 "shell"
-            ],
-            "args": [
-                "-l",
-                "-i",
-                "2",
-                "-ci"
-            ],
-            "additional_dependencies": [
-                "shfmt"
+            ]
+        }
+    ],
+    "https://github.com/jumanjihouse/pre-commit-hook-yamlfmt": [
+        {
+            "id": "yamlfmt",
+            "name": "Format YAML files",
+            "description": "Format YAML files",
+            "entry": "yamlfmt",
+            "language": "python",
+            "types": [
+                "yaml"
             ]
         }
     ],
@@ -1066,7 +1130,7 @@
             "name": "Dockerfile linter",
             "entry": "dockerfile_lint",
             "args": [
-                "-f"
+                "--dockerfile"
             ],
             "language": "node",
             "additional_dependencies": [
@@ -1085,7 +1149,7 @@
             "additional_dependencies": [
                 "markdown-toc"
             ],
-            "files": "^README.md$"
+            "files": ".*\\.md$"
         }
     ],
     "https://github.com/Lucas-C/pre-commit-hooks-safety": [
@@ -1100,45 +1164,154 @@
     ],
     "https://github.com/chriskuehl/puppet-pre-commit-hooks": [
         {
-            "id": "puppet-validate",
-            "name": "Validate Puppet manifests",
-            "description": "Validate syntax of Puppet manifests",
-            "entry": "puppet-validate",
-            "language": "ruby",
-            "files": "\\.pp$",
+            "id": "epp-validate",
             "additional_dependencies": [
                 "puppet"
-            ]
+            ],
+            "description": "Validate syntax of Puppet EPP templates",
+            "entry": "epp-validate",
+            "files": "\\.epp$",
+            "language": "ruby",
+            "name": "Validate EPP templates"
         },
         {
             "id": "erb-validate",
-            "name": "Validate ERB templates",
             "description": "Validate syntax of Ruby ERB templates",
             "entry": "erb-validate",
+            "files": "\\.erb$",
             "language": "ruby",
-            "files": "\\.erb$"
+            "name": "Validate ERB templates"
         },
         {
-            "id": "epp-validate",
-            "name": "Validate EPP templates",
-            "description": "Validate syntax of Puppet EPP templates",
-            "entry": "epp-validate",
+            "id": "g10k-validate",
+            "description": "Validate syntax of Puppetfile using g10k",
+            "entry": "g10k-validate",
+            "files": "^Puppetfile$",
             "language": "ruby",
-            "files": "\\.epp$",
-            "additional_dependencies": [
-                "puppet"
-            ]
+            "name": "Validate g10k Puppetfile"
         },
         {
             "id": "puppet-lint",
-            "name": "puppet-lint",
-            "description": "Check Puppet manifests for stylistic problems",
-            "entry": "puppet-lint",
-            "language": "ruby",
-            "files": "\\.pp$",
             "additional_dependencies": [
                 "puppet-lint"
-            ]
+            ],
+            "description": "Check Puppet manifests for stylistic problems",
+            "entry": "puppet-lint",
+            "files": "\\.pp$",
+            "language": "ruby",
+            "name": "puppet-lint"
+        },
+        {
+            "id": "puppet-validate",
+            "additional_dependencies": [
+                "puppet"
+            ],
+            "description": "Validate syntax of Puppet manifests",
+            "entry": "puppet-validate",
+            "files": "\\.pp$",
+            "language": "ruby",
+            "name": "Validate Puppet manifests"
+        },
+        {
+            "id": "r10k-validate",
+            "additional_dependencies": [
+                "r10k"
+            ],
+            "description": "Validate syntax of Puppetfile using r10k",
+            "entry": "r10k-validate",
+            "files": "^Puppetfile$",
+            "language": "ruby",
+            "name": "Validate r10k Puppetfile"
+        },
+        {
+            "id": "ruby-validate",
+            "additional_dependencies": [
+                "ruby"
+            ],
+            "description": "Validate syntax of ruby code",
+            "entry": "ruby-validate",
+            "files": "\\.rb$",
+            "language": "ruby",
+            "name": "Validate ruby syntax"
+        }
+    ],
+    "https://github.com/golangci/golangci-lint": [
+        {
+            "id": "golangci-lint",
+            "name": "golangci-lint",
+            "description": "Fast linters runner for Go.",
+            "entry": "golangci-lint run --fix",
+            "types": [
+                "go"
+            ],
+            "language": "golang",
+            "pass_filenames": false
+        }
+    ],
+    "https://github.com/Bahjat/pre-commit-golang": [
+        {
+            "id": "go-fmt-import",
+            "name": "go import/fmt",
+            "entry": "run-go-fmt-import.sh",
+            "files": "\\.go$",
+            "language": "script",
+            "description": "Runs `goimport,gofmt`, requires golang"
+        },
+        {
+            "id": "go-vet",
+            "name": "go vet",
+            "entry": "run-go-vet.sh",
+            "files": "\\.go$",
+            "language": "script",
+            "description": "Runs `go vet`, requires golang"
+        },
+        {
+            "id": "go-lint",
+            "name": "golint",
+            "entry": "run-go-lint.sh",
+            "files": "\\.go$",
+            "language": "script",
+            "description": "Runs `go lint`, requires golang"
+        },
+        {
+            "id": "go-unit-tests",
+            "name": "go unit test",
+            "entry": "run-go-unit-tests.sh",
+            "files": "\\.go$",
+            "language": "script",
+            "description": "Runs `go test`, requires golang"
+        },
+        {
+            "id": "gofumpt",
+            "name": "gofumpt",
+            "entry": "run-go-gofumpt.sh",
+            "files": "\\.go$",
+            "language": "script",
+            "description": "Runs `gofumpt`, requires github.com/mvdan/gofumpt"
+        },
+        {
+            "id": "go-err-check",
+            "name": "go errcheck",
+            "entry": "run-go-err-check.sh",
+            "files": "\\.go$",
+            "language": "script",
+            "description": "Runs `errcheck`, requires github.com/kisielk/errcheck"
+        },
+        {
+            "id": "go-static-check",
+            "name": "go staticcheck",
+            "entry": "run-go-static-check.sh",
+            "files": "\\.go$",
+            "language": "script",
+            "description": "Runs `staticcheck`, install https://staticcheck.io/docs/"
+        },
+        {
+            "id": "golangci-lint",
+            "name": "go golangci-lint",
+            "entry": "run-golangci-lint.sh",
+            "files": "\\.go$",
+            "language": "script",
+            "description": "Runs `golangci-lint`, install https://github.com/golangci/golangci-lint"
         }
     ],
     "https://github.com/dnephin/pre-commit-golang": [
@@ -1149,6 +1322,14 @@
             "files": "\\.go$",
             "language": "script",
             "description": "Runs `gofmt`, requires golang"
+        },
+        {
+            "id": "go-imports",
+            "name": "go imports",
+            "entry": "run-go-imports.sh",
+            "files": "\\.go$",
+            "language": "script",
+            "description": "Runs `goimports`, requires golang"
         },
         {
             "id": "go-vet",
@@ -1165,6 +1346,17 @@
             "files": "\\.go$",
             "language": "script",
             "description": "Runs `golint`, requires https://github.com/golang/lint"
+        },
+        {
+            "id": "go-cyclo",
+            "name": "go-cyclo",
+            "entry": "run-go-cyclo.sh",
+            "files": "\\.go$",
+            "language": "script",
+            "description": "Runs `gocyclo`, requires https://github.com/fzipp/gocyclo",
+            "args": [
+                "-over=15"
+            ]
         },
         {
             "id": "validate-toml",
@@ -1194,8 +1386,11 @@
             "id": "golangci-lint",
             "name": "golangci-lint",
             "entry": "run-golangci-lint.sh",
-            "files": "\\.go$",
+            "types": [
+                "go"
+            ],
             "language": "script",
+            "pass_filenames": false,
             "description": "Runs `golangci-lint`, requires https://github.com/golangci/golangci-lint"
         },
         {
@@ -1308,7 +1503,7 @@
             "id": "beautysh",
             "name": "beautysh",
             "description": "A Bash beautifier for the masses.\nhttps://pypi.python.org/pypi/beautysh\n",
-            "entry": "beautysh -f",
+            "entry": "beautysh",
             "language": "python",
             "types": [
                 "shell"
@@ -1329,6 +1524,7 @@
             "id": "terraform_docs",
             "name": "Terraform docs",
             "description": "Inserts input and output documentation into README.md (using terraform-docs).",
+            "require_serial": true,
             "entry": "terraform_docs.sh",
             "args": [
                 "--args=--with-aggregate-type-defaults"
@@ -1341,6 +1537,7 @@
             "id": "terraform_docs_without_aggregate_type_defaults",
             "name": "Terraform docs (without aggregate type defaults)",
             "description": "Inserts input and output documentation into README.md (using terraform-docs).",
+            "require_serial": true,
             "entry": "terraform_docs.sh",
             "language": "script",
             "files": "(\\.tf)$",
@@ -1349,29 +1546,46 @@
         {
             "id": "terraform_docs_replace",
             "name": "Terraform docs (overwrite README.md)",
-            "language": "python",
+            "description": "Overwrite content of README.md with terraform-docs.",
+            "require_serial": true,
             "entry": "terraform_docs_replace",
+            "language": "python",
             "files": "(\\.tf)$",
-            "exclude": "\\.terraform\\/.*$",
-            "description": "Overwrite content of README.md with terraform-docs"
+            "exclude": "\\.terraform\\/.*$"
         },
         {
-            "id": "terraform_validate_no_variables",
-            "name": "Terraform validate without variables",
-            "description": "Validates all Terraform configuration files without checking whether all required variables were set (basic check).",
-            "entry": "terraform_validate_no_variables.sh",
+            "id": "terraform_validate",
+            "name": "Terraform validate",
+            "description": "Validates all Terraform configuration files.",
+            "entry": "terraform_validate.sh",
             "language": "script",
             "files": "(\\.tf|\\.tfvars)$",
             "exclude": "\\.terraform\\/.*$"
         },
         {
-            "id": "terraform_validate_with_variables",
-            "name": "Terraform validate with variables",
-            "description": "Validates all Terraform configuration files and checks whether all required variables were specified.",
-            "entry": "terraform_validate_with_variables.sh",
+            "id": "terraform_tflint",
+            "name": "Terraform validate with tflint",
+            "description": "Validates all Terraform configuration files with TFLint.",
+            "entry": "terraform_tflint.sh",
             "language": "script",
             "files": "(\\.tf|\\.tfvars)$",
             "exclude": "\\.terraform\\/.*$"
+        },
+        {
+            "id": "terragrunt_fmt",
+            "name": "Terragrunt fmt",
+            "description": "Rewrites all Terragrunt configuration files to a canonical format.",
+            "entry": "terragrunt_fmt.sh",
+            "language": "script",
+            "files": "(\\.hcl)$",
+            "exclude": "\\.terraform\\/.*$"
+        },
+        {
+            "id": "terraform_tfsec",
+            "name": "Terraform validate with tfsec",
+            "description": "Static analysis of Terraform templates to spot potential security issues.",
+            "entry": "terraform_tfsec.sh",
+            "language": "script"
         }
     ],
     "https://github.com/ansible/ansible-lint": [
@@ -1379,9 +1593,10 @@
             "id": "ansible-lint",
             "name": "Ansible-lint",
             "description": "This hook runs ansible-lint.",
-            "entry": "ansible-lint",
+            "entry": "ansible-lint --force-color .",
             "language": "python",
-            "files": "\\.(yaml|yml)$"
+            "pass_filenames": false,
+            "always_run": true
         }
     ],
     "https://github.com/doublify/pre-commit-clang-format": [
@@ -1389,12 +1604,11 @@
             "id": "clang-format",
             "name": "clang-format",
             "description": "Format files with ClangFormat.",
-            "entry": "clang-format",
+            "entry": "clang-format -i",
             "language": "system",
-            "files": "\\.(c|cc|cxx|cpp|frag|glsl|h|hpp|hxx|ih|ispc|ipp|java|js|m|proto|vert)$",
+            "files": "\\.(c|cc|cxx|cpp|frag|glsl|h|hpp|hxx|ih|ispc|ipp|java|js|m|mm|proto|textproto|vert)$",
             "args": [
-                "-fallback-style=none",
-                "-i"
+                "-fallback-style=none"
             ]
         }
     ],
@@ -1448,11 +1662,35 @@
         {
             "id": "fmt",
             "name": "fmt",
-            "description": "Format files with rustfmt.",
-            "entry": "rustfmt --",
+            "description": "Format files with cargo fmt.",
+            "entry": "cargo fmt --",
             "language": "system",
-            "files": "\\.rs$",
+            "types": [
+                "rust"
+            ],
             "args": []
+        },
+        {
+            "id": "cargo-check",
+            "name": "cargo check",
+            "description": "Check the package for errors.",
+            "entry": "cargo check",
+            "language": "system",
+            "types": [
+                "rust"
+            ],
+            "pass_filenames": false
+        },
+        {
+            "id": "clippy",
+            "name": "clippy",
+            "description": "Lint rust sources",
+            "entry": "cargo clippy -- -D warnings",
+            "language": "system",
+            "types": [
+                "rust"
+            ],
+            "pass_filenames": false
         }
     ],
     "https://github.com/kintoandar/pre-commit": [
@@ -1574,13 +1812,13 @@
             "id": "gitlint",
             "name": "gitlint",
             "language": "python",
-            "entry": "gitlint --msg-filename",
+            "entry": "gitlint --staged --msg-filename",
             "stages": [
                 "commit-msg"
             ]
         }
     ],
-    "https://github.com/ambv/black": [
+    "https://github.com/psf/black": [
         {
             "id": "black",
             "name": "black",
@@ -1651,6 +1889,31 @@
             ],
             "files": "(?x)^(\n    .*/(recipes|attributes|resources|providers)/.*\\.rb|\n    .*/metadata\\.rb\n)$\n",
             "exclude": ".*/test/.*\\.rb$",
+            "verbose": true
+        },
+        {
+            "id": "cookstyle",
+            "name": "Enforce Chef style guide with cookstyle",
+            "description": "Enforce Chef style guide with cookstyle",
+            "entry": "bin/cookstyle-wrapper.rb",
+            "language": "script",
+            "pass_filenames": true,
+            "types": [
+                "ruby"
+            ],
+            "verbose": true,
+            "require_serial": true
+        },
+        {
+            "id": "chef-cookbook-version",
+            "name": "Ensure Chef cookbook version bump",
+            "description": "Ensure Chef cookbook versions are bumped when contents are changed",
+            "entry": "bin/cookbook-wrapper.rb",
+            "language": "script",
+            "pass_filenames": true,
+            "types": [
+                "file"
+            ],
             "verbose": true
         }
     ],
@@ -1754,7 +2017,7 @@
     "https://github.com/awslabs/cfn-python-lint": [
         {
             "id": "cfn-python-lint",
-            "name": "AWSLabs CloudFormation Linter",
+            "name": "AWS CloudFormation Linter",
             "entry": "cfn-lint",
             "language": "python",
             "files": "\\.(json|yaml|yml)$"
@@ -1764,7 +2027,7 @@
         {
             "id": "talisman-commit",
             "name": "talisman",
-            "entry": "talisman -githook pre-commit",
+            "entry": "talisman --githook pre-commit",
             "stages": [
                 "commit"
             ],
@@ -1777,7 +2040,7 @@
         {
             "id": "talisman-push",
             "name": "talisman",
-            "entry": "talisman -githook pre-push",
+            "entry": "talisman --githook pre-push",
             "stages": [
                 "push"
             ],
@@ -1825,6 +2088,17 @@
             ]
         }
     ],
+    "https://github.com/PyCQA/pylint": [
+        {
+            "id": "pylint",
+            "name": "pylint",
+            "entry": "pylint",
+            "language": "python",
+            "types": [
+                "python"
+            ]
+        }
+    ],
     "https://github.com/miki725/importanize": [
         {
             "id": "importanize",
@@ -1835,6 +2109,10 @@
             "language_version": "python3",
             "types": [
                 "python"
+            ],
+            "args": [
+                "-v",
+                "--no-auto-pipe"
             ]
         }
     ],
@@ -1888,6 +2166,1523 @@
                 "file",
                 "non-executable",
                 "text"
+            ]
+        }
+    ],
+    "https://github.com/homebysix/pre-commit-macadmin": [
+        {
+            "id": "check-autopkg-recipe-list",
+            "name": "Check AutoPkg Recipe List",
+            "description": "This hook checks AutoPkg recipe lists (in txt, plist, yaml, or json format) for common issues.",
+            "entry": "check-autopkg-recipe-list",
+            "language": "python",
+            "files": "recipe.?list\\.(plist|yaml|yml|json|txt)$",
+            "types": [
+                "text"
+            ]
+        },
+        {
+            "id": "check-autopkg-recipes",
+            "name": "Check AutoPkg Recipes",
+            "description": "This hook checks AutoPkg recipes to ensure they contain required top-level keys.",
+            "entry": "check-autopkg-recipes",
+            "language": "python",
+            "files": "\\.recipe$",
+            "types": [
+                "text"
+            ]
+        },
+        {
+            "id": "check-git-config-email",
+            "name": "Check Git Config Email",
+            "description": "This hook checks to ensure the Git config email matches one of the specified domains.",
+            "entry": "check-git-config-email",
+            "language": "python",
+            "pass_filenames": false,
+            "always_run": true
+        },
+        {
+            "id": "check-jamf-extension-attributes",
+            "name": "Check Jamf EAs",
+            "description": "This hook checks Jamf extension attributes for common issues.",
+            "entry": "check-jamf-extension-attributes",
+            "language": "python",
+            "files": "(jamf|jss)/extension.?attributes/.*\\.(sh|bash|py|rb|js|pl)$",
+            "types": [
+                "text"
+            ]
+        },
+        {
+            "id": "check-jamf-scripts",
+            "name": "Check Jamf Scripts",
+            "description": "This hook checks Jamf scripts for common issues.",
+            "entry": "check-jamf-scripts",
+            "language": "python",
+            "files": "(jamf|jss)/scripts/.*\\.(sh|bash|py|rb|js|pl)$",
+            "types": [
+                "text"
+            ]
+        },
+        {
+            "id": "check-jamf-profiles",
+            "name": "Check Jamf Profiles",
+            "description": "This hook checks Jamf profiles for common issues.",
+            "entry": "check-jamf-profiles",
+            "language": "python",
+            "files": "(jamf|jss)/profiles/.*\\.(mobileconfig|plist)$",
+            "types": [
+                "text"
+            ]
+        },
+        {
+            "id": "check-munki-pkgsinfo",
+            "name": "Check Munki Pkginfo Files",
+            "description": "This hook checks Munki pkginfo files to ensure they are valid.",
+            "entry": "check-munki-pkgsinfo",
+            "language": "python",
+            "files": "^pkgsinfo/",
+            "types": [
+                "text"
+            ]
+        },
+        {
+            "id": "check-munkiadmin-scripts",
+            "name": "Check MunkiAdmin Scripts",
+            "description": "This hook ensures MunkiAdmin scripts are executable.",
+            "entry": "check-munkiadmin-scripts",
+            "language": "python",
+            "files": "^MunkiAdmin/scripts/",
+            "types": [
+                "text"
+            ]
+        },
+        {
+            "id": "check-munkipkg-buildinfo",
+            "name": "Check MunkiPkg Build-Info Files",
+            "description": "This hook checks MunkiPkg build-info files to ensure they are valid.",
+            "entry": "check-munkipkg-buildinfo",
+            "language": "python",
+            "files": "build-info\\.(plist|yml|yaml|json)$",
+            "types": [
+                "text"
+            ]
+        },
+        {
+            "id": "check-outset-scripts",
+            "name": "Check Outset Scripts",
+            "description": "This hook checks Outset scripts to ensure they're executable.",
+            "entry": "check-outset-scripts",
+            "language": "python",
+            "files": "usr/local/outset/(boot-once|boot-every|login-once|login-every|login-privileged-once|login-privileged-every|on-demand)/",
+            "types": [
+                "text"
+            ]
+        },
+        {
+            "id": "check-plists",
+            "name": "Check Plists",
+            "description": "This hook checks XML property list (plist) files for basic syntax errors.",
+            "entry": "check-plists",
+            "language": "python",
+            "files": "\\.(plist|recipe|mobileconfig|pkginfo)$",
+            "types": [
+                "text"
+            ]
+        },
+        {
+            "id": "forbid-autopkg-overrides",
+            "name": "Forbid AutoPkg Overrides",
+            "description": "This hook prevents AutoPkg overrides from being added to the repo.",
+            "entry": "forbid-autopkg-overrides",
+            "language": "python",
+            "files": "\\.recipe$",
+            "types": [
+                "text"
+            ]
+        },
+        {
+            "id": "forbid-autopkg-trust-info",
+            "name": "Forbid AutoPkg Trust Info",
+            "description": "This hook prevents AutoPkg recipes with trust info from being added to the repo.",
+            "entry": "forbid-autopkg-trust-info",
+            "language": "python",
+            "files": "\\.recipe$",
+            "types": [
+                "text"
+            ]
+        },
+        {
+            "id": "munki-makecatalogs",
+            "name": "Run Munki Makecatalogs",
+            "description": "This hook runs the \"makecatalogs\" command to ensure all referenced packages are present and catalogs are up to date.",
+            "entry": "munki-makecatalogs",
+            "language": "python",
+            "pass_filenames": false,
+            "always_run": true
+        }
+    ],
+    "https://github.com/fortman/pre-commit-prometheus": [
+        {
+            "id": "check-config",
+            "stages": [
+                "commit"
+            ],
+            "name": "Check prometheus config files",
+            "description": "Check prometheus config files",
+            "language": "docker_image",
+            "entry": "--entrypoint /bin/promtool prom/prometheus:latest",
+            "files": "^$",
+            "args": [
+                "check",
+                "config"
+            ]
+        },
+        {
+            "id": "check-rules",
+            "stages": [
+                "commit"
+            ],
+            "name": "Check prometheus rule files",
+            "description": "Check prometheus rule files",
+            "language": "docker_image",
+            "entry": "--entrypoint /bin/promtool prom/prometheus:latest",
+            "files": "^$",
+            "args": [
+                "check",
+                "rules"
+            ]
+        }
+    ],
+    "https://github.com/syntaqx/git-hooks": [
+        {
+            "id": "circleci-config-validate",
+            "name": "CircleCI config validation",
+            "description": "Test if the CircleCI config is well formed.",
+            "entry": "hooks/circleci-config-validate.sh",
+            "language": "script",
+            "files": "^.circleci/config.yml$"
+        },
+        {
+            "id": "go-fmt",
+            "name": "go fmt",
+            "description": "Runs `go fmt` and asserts no changes are needed.",
+            "entry": "hooks/go-fmt.sh",
+            "language": "script",
+            "files": "\\.go$"
+        },
+        {
+            "id": "go-test",
+            "name": "go test",
+            "description": "Runs `go test` and asserts no tests are failing.",
+            "entry": "hooks/go-test.sh",
+            "language": "script",
+            "files": "\\.go$"
+        },
+        {
+            "id": "go-mod-tidy",
+            "name": "go mod tidy",
+            "description": "Runs `go mod tidy` to ensure `go.mod` matches the project source.",
+            "entry": "hooks/go-mod-tidy.sh",
+            "language": "script",
+            "files": "\\.go$"
+        },
+        {
+            "id": "go-generate",
+            "name": "go generate",
+            "description": "Runs `go generate` against the projects go files.",
+            "entry": "hooks/go-generate.sh",
+            "language": "script",
+            "files": "\\.go$",
+            "always_run": true
+        },
+        {
+            "id": "forbid-binary",
+            "name": "Forbid binaries",
+            "description": "Forbid binary files from being committed",
+            "entry": "hooks/forbid-binary.sh",
+            "language": "script",
+            "types": [
+                "binary"
+            ]
+        },
+        {
+            "id": "shellcheck",
+            "name": "Test shell scripts with shellcheck",
+            "description": "Shell scripts conform to shellcheck",
+            "entry": "hooks/shellcheck.sh",
+            "language": "script",
+            "types": [
+                "shell"
+            ],
+            "args": [
+                "-e",
+                "SC1091"
+            ],
+            "additional_dependencies": [
+                "shellcheck"
+            ]
+        },
+        {
+            "id": "shfmt",
+            "name": "Check shell style with shfmt",
+            "language": "script",
+            "entry": "hooks/shfmt.sh",
+            "types": [
+                "shell"
+            ],
+            "args": [
+                "-l",
+                "-i",
+                "2",
+                "-ci"
+            ],
+            "additional_dependencies": [
+                "shfmt"
+            ]
+        }
+    ],
+    "https://github.com/Calinou/pre-commit-luacheck": [
+        {
+            "id": "luacheck",
+            "name": "Luacheck",
+            "description": "Lints Lua files using Luacheck.",
+            "entry": "luacheck --",
+            "language": "system",
+            "types": [
+                "file",
+                "lua"
+            ]
+        }
+    ],
+    "https://github.com/belminf/pre-commit-chef": [
+        {
+            "id": "cookstyle",
+            "name": "Chef-specific Rubocop linting with Cookstyle",
+            "entry": "run_cookstyle.rb",
+            "language": "ruby",
+            "pass_filenames": true,
+            "types": [
+                "ruby"
+            ],
+            "files": ".*",
+            "args": [
+                "-a",
+                "-D",
+                "-S"
+            ],
+            "require_serial": true
+        },
+        {
+            "id": "foodcritic",
+            "name": "Chef cookbook linting with Foodcritic",
+            "entry": "run_foodcritic.rb",
+            "language": "ruby",
+            "pass_filenames": true,
+            "types": [
+                "ruby"
+            ],
+            "files": "(?x)^(\n    (.*/)?(recipes|attributes|resources|providers)/.*\\.rb|\n    (.*/)?metadata\\.rb\n)$\n",
+            "exclude": ".*/test/.*\\.rb$",
+            "require_serial": true
+        }
+    ],
+    "https://github.com/timothycrosley/isort": [
+        {
+            "id": "isort",
+            "name": "isort",
+            "entry": "isort",
+            "require_serial": true,
+            "language": "python",
+            "types": [
+                "python"
+            ]
+        }
+    ],
+    "https://github.com/pocc/pre-commit-hooks": [
+        {
+            "id": "clang-format",
+            "name": "clang-format",
+            "entry": "clang-format-hook",
+            "description": "Formats C/CPP code",
+            "files": "\\.(c|cc|cxx|cpp|h|hpp|hxx|m)$",
+            "language": "python"
+        },
+        {
+            "id": "clang-tidy",
+            "name": "clang-tidy",
+            "entry": "clang-tidy-hook",
+            "description": "Find warnings/errors in C/CPP code",
+            "files": "\\.(c|cc|cxx|cpp|h|hpp|hxx|m)$",
+            "language": "python"
+        },
+        {
+            "id": "oclint",
+            "name": "oclint",
+            "entry": "oclint-hook",
+            "description": "Find warnings/errors in C/CPP code",
+            "files": "\\.(c|cc|cxx|cpp|h|hpp|hxx|m)$",
+            "language": "python"
+        },
+        {
+            "id": "uncrustify",
+            "name": "uncrustify",
+            "entry": "uncrustify-hook",
+            "description": "Formats C/CPP code",
+            "files": "\\.(c|cc|cxx|cpp|h|hpp|hxx|m)$",
+            "language": "python"
+        },
+        {
+            "id": "cppcheck",
+            "name": "cppcheck",
+            "entry": "cppcheck-hook",
+            "description": "Find warnings/errors in C/CPP code",
+            "files": "\\.(c|cc|cxx|cpp|h|hpp|hxx|m)$",
+            "language": "python"
+        }
+    ],
+    "https://github.com/dwightgunning/pre-commit-nglint": [
+        {
+            "id": "nglint",
+            "name": "nglint",
+            "description": "Runs ng lint",
+            "entry": "nglint.py",
+            "language": "script",
+            "minimum_pre_commit_version": "0.12.0"
+        }
+    ],
+    "https://github.com/codespell-project/codespell": [
+        {
+            "id": "codespell",
+            "name": "codespell",
+            "description": "Checks for common misspellings in text files.",
+            "entry": "codespell",
+            "language": "python",
+            "types": [
+                "text"
+            ]
+        }
+    ],
+    "https://gitlab.com/smop/pre-commit-hooks": [
+        {
+            "id": "check-poetry",
+            "name": "Poetry check",
+            "description": "Validates the structure of the pyproject.toml file",
+            "entry": "poetry check",
+            "language": "system",
+            "pass_filenames": false,
+            "files": "pyproject.toml"
+        },
+        {
+            "id": "check-gitlab-ci",
+            "name": "GitLab CI/CD configuration check",
+            "description": "Validates .gitlab-ci.yml file",
+            "entry": "pre_commit_hooks/check-gitlab-ci",
+            "language": "script",
+            "pass_filenames": false,
+            "files": ".gitlab-ci.yml"
+        }
+    ],
+    "https://github.com/seddonym/import-linter": [
+        {
+            "id": "import-linter",
+            "name": "import-linter",
+            "description": "Import Linter allows you to define and enforce rules for the internal and external imports within your Python project.",
+            "entry": "lint-imports",
+            "language": "python",
+            "types": [
+                "python"
+            ],
+            "pass_filenames": false
+        }
+    ],
+    "https://github.com/marco-c/taskcluster_yml_validator": [
+        {
+            "id": "taskcluster_yml",
+            "name": "taskcluster_yml",
+            "description": "Checks for validity of .taskcluster.yml file.",
+            "entry": "taskcluster_yml_validator",
+            "language": "python",
+            "files": "^\\.taskcluster\\.yml$",
+            "args": [],
+            "require_serial": false,
+            "additional_dependencies": []
+        }
+    ],
+    "https://github.com/myint/docformatter": [
+        {
+            "id": "docformatter",
+            "name": "docformatter",
+            "description": "Formats docstrings to follow PEP 257.",
+            "entry": "docformatter",
+            "args": [
+                "-i"
+            ],
+            "language": "python",
+            "types": [
+                "python"
+            ]
+        },
+        {
+            "id": "docformatter-venv",
+            "name": "docformatter-venv",
+            "description": "Formats docstrings to follow PEP 257. Uses python3 -m venv.",
+            "entry": "docformatter",
+            "args": [
+                "-i"
+            ],
+            "language": "python_venv",
+            "types": [
+                "python"
+            ]
+        }
+    ],
+    "https://github.com/lorenzwalthert/precommit": [
+        {
+            "id": "roxygenize",
+            "name": "roxygenize",
+            "description": "run roxygen2::roxygenize()",
+            "entry": "inst/bin/roxygenize",
+            "language": "script",
+            "files": "^(R|man)/"
+        },
+        {
+            "id": "use-tidy-description",
+            "name": "use-tidy-description",
+            "description": "run usethis::use_tidy_description()",
+            "entry": "inst/bin/use-tidy-description",
+            "language": "script",
+            "files": "^DESCRIPTION$"
+        },
+        {
+            "id": "style-files",
+            "name": "style-files",
+            "description": "style files with styler",
+            "entry": "inst/bin/style-files",
+            "language": "script",
+            "files": "(\\.R|\\.Rmd|\\.Rnw|\\.r|\\.rmd|\\.rnw)$"
+        },
+        {
+            "id": "no-browser-statement",
+            "name": "no-browser-statement",
+            "description": "check if a .R file contains a `browser()` statement",
+            "entry": "inst/bin/no-browser-statement",
+            "language": "script",
+            "files": "\\.[rR]$"
+        },
+        {
+            "id": "parsable-R",
+            "name": "parsable-R",
+            "description": "check if a .R file is parsable",
+            "entry": "inst/bin/parsable-R",
+            "language": "script",
+            "files": "\\.[rR]$"
+        },
+        {
+            "id": "readme-rmd-rendered",
+            "name": "readme-rmd-rendered",
+            "description": "make sure README.Rmd hasn't been edited more recently than README.md",
+            "entry": "inst/bin/readme-rmd-rendered",
+            "language": "script",
+            "files": "README\\.[Rr]?md$"
+        },
+        {
+            "id": "codemeta-description-updated",
+            "name": "codemeta-description-updated",
+            "description": "make sure codemeta.json is in sync with DESCRIPTION. It should be run after use-tidy-description.",
+            "entry": "inst/bin/codemeta-description-updated",
+            "language": "script",
+            "files": "^DESCRIPTION$"
+        },
+        {
+            "id": "spell-check",
+            "name": "spell-check",
+            "description": "perform a spell check with spelling::spell_check_files()",
+            "entry": "inst/bin/spell-check",
+            "language": "script",
+            "exclude": "(?x)^( data/.*|  (.*/|)\\.Rprofile| (.*/|)\\.Renviron| (.*/|)\\.gitignore| (.*/|)NAMESPACE| (.*/|)WORDLIST| (.*/|)\\.travis.yml| (.*/|)appveyor.yml| (.*/|)\\.Rbuildignore| (.*/|)\\.pre-commit-.*| .*\\.[rR]| .*\\.Rproj| .*\\.py| .*\\.feather| .*\\.rds| .*\\.Rds| .*\\.sh| .*\\.RData )$\n",
+            "require_serial": true
+        },
+        {
+            "id": "deps-in-desc",
+            "name": "deps-in-desc",
+            "description": "Check if dependencies that can be parsed from code are in DESCRIPTION.",
+            "entry": "inst/bin/deps-in-desc",
+            "language": "script",
+            "files": "\\.[rR]$"
+        },
+        {
+            "id": "lintr",
+            "name": "lintr",
+            "description": "check if a .R file is lint free (using lintr)",
+            "entry": "inst/bin/lintr",
+            "language": "script",
+            "files": "\\.[rR]$"
+        }
+    ],
+    "https://github.com/FelixSeptem/pre-commit-golang": [
+        {
+            "id": "bazel-buildifier",
+            "name": "bazel buildifier",
+            "entry": "run-bazel-buildifier.sh",
+            "files": "BUILD.bazel|BUILD",
+            "language": "script",
+            "description": "Runs `buildifier`, requires bazel buildifier"
+        },
+        {
+            "id": "go-imports",
+            "name": "go imports",
+            "entry": "run-go-imports.sh",
+            "files": "\\.go$",
+            "language": "script",
+            "description": "Runs `go imports`, requires golang"
+        },
+        {
+            "id": "go-critic",
+            "name": "go-critic",
+            "entry": "run-go-critic.sh",
+            "files": "\\.go$",
+            "language": "script",
+            "description": "Runs `go-critic`, requires go-critic"
+        },
+        {
+            "id": "golangci-lint",
+            "name": "golangci-lint",
+            "entry": "run-golangci-lint.sh",
+            "files": "\\.go$",
+            "language": "script",
+            "description": "Runs `golangci-lint`, requires golangci-lint"
+        },
+        {
+            "id": "golangci-lint-conf",
+            "name": "golangci-lint-conf",
+            "entry": "run-golangci-lint-conf.sh",
+            "files": "\\.go$",
+            "language": "script",
+            "description": "Runs `golangci-lint` read local config file, requires golangci-lint"
+        }
+    ],
+    "https://gitlab.com/daverona/pre-commit-cpp": [
+        {
+            "id": "clang-format",
+            "name": "formatter of C/C++ code",
+            "description": "Run clang-format against C/C++ header and source files",
+            "language": "system",
+            "files": "\\.(h\\+\\+|h|hh|hxx|hpp|cuh|c|cc|cpp|cu|c\\+\\+|cxx|tpp|txx)$",
+            "entry": "clang-format -i",
+            "args": [
+                "-style=Google"
+            ]
+        },
+        {
+            "id": "cpplint",
+            "name": "linter for Google C++ Style Guide",
+            "description": "Run cpplint against C/C++ header and source files",
+            "language": "python",
+            "files": "\\.(h\\+\\+|h|hh|hxx|hpp|cuh|c|cc|cpp|cu|c\\+\\+|cxx|tpp|txx)$",
+            "entry": "cpplint"
+        },
+        {
+            "id": "cppcheck",
+            "name": "static analyzer of C/C++ code",
+            "description": "Run cppcheck against C/C++ source files",
+            "language": "system",
+            "files": "\\.(c|cc|cpp|cu|c\\+\\+|cxx|tpp|txx)$",
+            "entry": "cppcheck --error-exitcode=1"
+        }
+    ],
+    "https://github.com/codingjoe/relint": [
+        {
+            "id": "relint",
+            "name": "relint",
+            "description": "Write your own linting rules using regular expressions.",
+            "entry": "relint",
+            "language": "python",
+            "types": [
+                "file"
+            ]
+        }
+    ],
+    "https://github.com/nix-community/nixpkgs-fmt": [
+        {
+            "id": "nixpkgs-fmt",
+            "name": "nixpkgs-fmt",
+            "description": "Format nix code with nixpkgs-fmt.",
+            "entry": "nixpkgs-fmt",
+            "language": "rust",
+            "files": "\\.nix$",
+            "minimum_pre_commit_version": "1.18.1"
+        }
+    ],
+    "https://github.com/d6e/beancount-check": [
+        {
+            "id": "beancount-check",
+            "name": "beancount-check",
+            "entry": "bean-check",
+            "language": "python",
+            "files": ".*(.beancount|.ledger)$",
+            "require_serial": true,
+            "additional_dependencies": [
+                "beancount"
+            ]
+        }
+    ],
+    "https://github.com/iconmaster5326/cmake-format-pre-commit-hook": [
+        {
+            "id": "cmake-format",
+            "name": "cmake-format",
+            "description": "Formats CMake list files.",
+            "entry": "cmake-format",
+            "language": "python",
+            "files": "(CMakeLists.*|.*\\.cmake|.*\\.cmake.in)$",
+            "args": [
+                "-i"
+            ],
+            "require_serial": false,
+            "additional_dependencies": []
+        }
+    ],
+    "https://github.com/thg-consulting/inspectortiger": [
+        {
+            "id": "inspectortiger",
+            "name": "inspectortiger",
+            "description": "Inspects your code",
+            "entry": "inspectortiger",
+            "language": "python",
+            "language_version": "python3.7",
+            "require_serial": true,
+            "verbose": true,
+            "types": [
+                "python"
+            ]
+        }
+    ],
+    "https://gitlab.com/iamlikeme/nbhooks": [
+        {
+            "id": "nb-ensure-clean",
+            "name": "nb-ensure-clean",
+            "description": "Ensure that committed Jupyter notebooks contain no outputs.",
+            "entry": "nb-ensure-clean",
+            "files": "\\.ipynb$",
+            "language": "python",
+            "language_version": "python3"
+        }
+    ],
+    "https://github.com/Kuniwak/vint": [
+        {
+            "id": "vint",
+            "name": "Vint Vim script linting",
+            "description": "Lints all vim files",
+            "language": "python",
+            "entry": "vint",
+            "types": [
+                "vim"
+            ]
+        }
+    ],
+    "https://github.com/eschulte/lisp-format": [
+        {
+            "id": "lisp-format",
+            "name": "formatter of lisp code",
+            "description": "Run lisp-format against lisp files",
+            "language": "system",
+            "files": "\\.(lisp|cl|asd|scm|el)$",
+            "entry": "lisp-format -i"
+        }
+    ],
+    "https://github.com/shellcheck-py/shellcheck-py": [
+        {
+            "id": "shellcheck",
+            "name": "shellcheck",
+            "description": "Test shell scripts with shellcheck",
+            "entry": "shellcheck",
+            "language": "python",
+            "types": [
+                "shell"
+            ],
+            "require_serial": true
+        }
+    ],
+    "https://github.com/APIDevTools/swagger-cli": [
+        {
+            "id": "swagger-validation",
+            "name": "swagger-validation",
+            "entry": "swagger-cli",
+            "description": "Hook to validate swagger specs.",
+            "language": "node",
+            "files": "(openapi|swagger).*\\.(json|ya?ml)$",
+            "args": [
+                "validate"
+            ]
+        }
+    ],
+    "https://github.com/kynan/nbstripout": [
+        {
+            "id": "nbstripout",
+            "name": "nbstripout",
+            "description": "nbstripout: strip output from Jupyter and IPython notebooks",
+            "entry": "nbstripout",
+            "language": "python",
+            "files": "\\.ipynb$"
+        }
+    ],
+    "https://gitlab.com/devopshq/gitlab-ci-linter": [
+        {
+            "id": "gitlab-ci-linter",
+            "name": ".gitlab-ci.yml linter",
+            "description": "Validates .gitlab-ci.yml file (pure-python version without dependencies)",
+            "entry": "gitlab-ci-linter",
+            "language": "python",
+            "language_version": "python3",
+            "pass_filenames": false,
+            "files": ".gitlab-ci.yml"
+        }
+    ],
+    "https://github.com/bmorcos/pre-commit-hooks-cpp": [
+        {
+            "id": "clang-format",
+            "name": "clang-format",
+            "description": "Format C code using clang-format.",
+            "language": "system",
+            "files": "\\.(c|cc|cxx|cpp|h|hpp|hxx)$",
+            "entry": "clang-format -i",
+            "args": [
+                "-style=Google"
+            ]
+        },
+        {
+            "id": "cpplint",
+            "name": "cpplint",
+            "description": "Check style of C code using cpplint.",
+            "language": "python",
+            "files": "\\.(c|cc|cxx|cpp|h|hpp|hxx)$",
+            "entry": "cpplint",
+            "args": [
+                "--verbose=3"
+            ]
+        },
+        {
+            "id": "cppcheck",
+            "name": "cppcheck",
+            "description": "Check correctness of C code using cppcheck.",
+            "language": "system",
+            "files": "\\.(c|cc|cxx|cpp|h|hpp|hxx)$",
+            "entry": "cppcheck --error-exitcode=1",
+            "args": [
+                "--enable=warning"
+            ]
+        }
+    ],
+    "https://github.com/igorshubovych/markdownlint-cli": [
+        {
+            "id": "markdownlint",
+            "name": "markdownlint",
+            "description": "Checks the style of Markdown/Commonmark files.",
+            "entry": "markdownlint",
+            "language": "node",
+            "types": [
+                "markdown"
+            ],
+            "minimum_pre_commit_version": "0.15.0"
+        }
+    ],
+    "https://github.com/TekWizely/pre-commit-golang": [
+        {
+            "id": "go-build-mod",
+            "name": "go-build-mod",
+            "entry": "go-build-mod.sh",
+            "files": "(\\.go$)|(\\bgo\\.mod$)",
+            "exclude": "(^|/)vendor/",
+            "language": "script",
+            "description": "Run 'cd $(mod_root $FILE); go build -o /dev/null [$ARGS] ./...' for each staged .go file",
+            "pass_filenames": true,
+            "require_serial": true
+        },
+        {
+            "id": "go-build-pkg",
+            "name": "go-build-pkg",
+            "entry": "go-build-pkg.sh",
+            "types": [
+                "go"
+            ],
+            "exclude": "(^|/)vendor/",
+            "language": "script",
+            "description": "Run 'go build -o /dev/null [$ARGS] ./$(dirname $FILE)' for each staged .go file",
+            "pass_filenames": true,
+            "require_serial": true
+        },
+        {
+            "id": "go-build-repo-mod",
+            "name": "go-build-repo-mod",
+            "entry": "go-build-repo-mod.sh",
+            "files": "(\\.go$)|(\\bgo\\.mod$)",
+            "exclude": "(^|/)vendor/",
+            "language": "script",
+            "description": "Run 'cd $(mod_root); go build -o /dev/null [$ARGS] ./...' for each module in the repo",
+            "pass_filenames": false
+        },
+        {
+            "id": "go-build-repo-pkg",
+            "name": "go-build-repo-pkg",
+            "entry": "go-build-repo-pkg.sh",
+            "types": [
+                "go"
+            ],
+            "exclude": "(^|/)vendor/",
+            "language": "script",
+            "description": "Run 'go build -o /dev/null [$ARGS] ./...' in repo root folder",
+            "pass_filenames": false
+        },
+        {
+            "id": "go-critic",
+            "name": "go-critic",
+            "entry": "go-critic.sh",
+            "types": [
+                "go"
+            ],
+            "exclude": "(^|/)vendor/",
+            "language": "script",
+            "description": "Run 'gocritic check [$ARGS] $FILE' for each staged .go file",
+            "pass_filenames": true
+        },
+        {
+            "id": "go-fmt",
+            "name": "go-fmt",
+            "entry": "go-fmt.sh",
+            "types": [
+                "go"
+            ],
+            "exclude": "(^|/)vendor/",
+            "language": "script",
+            "description": "Run 'gofmt -l -d [$ARGS] $FILE' for each staged .go file",
+            "pass_filenames": true
+        },
+        {
+            "id": "go-imports",
+            "name": "go-imports",
+            "entry": "go-imports.sh",
+            "types": [
+                "go"
+            ],
+            "exclude": "(^|/)vendor/",
+            "language": "script",
+            "description": "Run 'goimports -l -d [$ARGS] $FILE' for each staged .go file",
+            "pass_filenames": true
+        },
+        {
+            "id": "go-lint",
+            "name": "go-lint",
+            "entry": "go-lint.sh",
+            "types": [
+                "go"
+            ],
+            "exclude": "(^|/)vendor/",
+            "language": "script",
+            "description": "Run 'golint -set_exit_status [$ARGS] $FILE' for each staged .go file",
+            "pass_filenames": true
+        },
+        {
+            "id": "go-returns",
+            "name": "go-returns",
+            "entry": "go-returns.sh",
+            "types": [
+                "go"
+            ],
+            "exclude": "(^|/)vendor/",
+            "language": "script",
+            "description": "Run 'goreturns -l -d [$ARGS] $FILE' for each staged .go file",
+            "pass_filenames": true
+        },
+        {
+            "id": "go-test-mod",
+            "name": "go-test-mod",
+            "entry": "go-test-mod.sh",
+            "files": "(\\.go$)|(\\bgo\\.mod$)",
+            "exclude": "(^|/)vendor/",
+            "language": "script",
+            "description": "Run 'cd $(mod_root $FILE); go test [$ARGS] ./...' for each staged .go file",
+            "pass_filenames": true,
+            "require_serial": true
+        },
+        {
+            "id": "go-test-pkg",
+            "name": "go-test-pkg",
+            "entry": "go-test-pkg.sh",
+            "types": [
+                "go"
+            ],
+            "exclude": "(^|/)vendor/",
+            "language": "script",
+            "description": "Run 'go test [$ARGS] ./$(dirname $FILE)' for each staged .go file",
+            "pass_filenames": true,
+            "require_serial": true
+        },
+        {
+            "id": "go-test-repo-mod",
+            "name": "go-test-repo-mod",
+            "entry": "go-test-repo-mod.sh",
+            "files": "(\\.go$)|(\\bgo\\.mod$)",
+            "exclude": "(^|/)vendor/",
+            "language": "script",
+            "description": "Run 'cd $(mod_root); go test [$ARGS] ./...' for each module in the repo",
+            "pass_filenames": false
+        },
+        {
+            "id": "go-test-repo-pkg",
+            "name": "go-test-repo-pkg",
+            "entry": "go-test-repo-pkg.sh",
+            "types": [
+                "go"
+            ],
+            "exclude": "(^|/)vendor/",
+            "language": "script",
+            "description": "Run 'go test [$ARGS] ./...' in repo root folder",
+            "pass_filenames": false
+        },
+        {
+            "id": "go-vet-mod",
+            "name": "go-vet-mod",
+            "entry": "go-vet-mod.sh",
+            "files": "(\\.go$)|(\\bgo\\.mod$)",
+            "exclude": "(^|/)vendor/",
+            "language": "script",
+            "description": "Run 'cd $(mod_root $FILE); go vet [$ARGS] ./...' for each staged .go file",
+            "pass_filenames": true,
+            "require_serial": true
+        },
+        {
+            "id": "go-vet-pkg",
+            "name": "go-vet-pkg",
+            "entry": "go-vet-pkg.sh",
+            "types": [
+                "go"
+            ],
+            "exclude": "(^|/)vendor/",
+            "language": "script",
+            "description": "Run 'go vet [$ARGS] ./$(dirname $FILE)' for each staged .go file",
+            "pass_filenames": true,
+            "require_serial": true
+        },
+        {
+            "id": "go-vet-repo-mod",
+            "name": "go-vet-repo-mod",
+            "entry": "go-vet-repo-mod.sh",
+            "files": "(\\.go$)|(\\bgo\\.mod$)",
+            "exclude": "(^|/)vendor/",
+            "language": "script",
+            "description": "Run 'cd $(mod_root); go vet [$ARGS] ./...' for each module in the repo",
+            "pass_filenames": false
+        },
+        {
+            "id": "go-vet-repo-pkg",
+            "name": "go-vet-repo-pkg",
+            "entry": "go-vet-repo-pkg.sh",
+            "types": [
+                "go"
+            ],
+            "exclude": "(^|/)vendor/",
+            "language": "script",
+            "description": "Run 'go vet [$ARGS] ./...' in repo root folder",
+            "pass_filenames": false
+        },
+        {
+            "id": "go-vet",
+            "name": "go-vet",
+            "entry": "go-vet.sh",
+            "types": [
+                "go"
+            ],
+            "exclude": "(^|/)vendor/",
+            "language": "script",
+            "description": "Run 'go vet [$ARGS] $FILE' for each staged .go file",
+            "pass_filenames": true
+        },
+        {
+            "id": "golangci-lint-mod",
+            "name": "golangci-lint-mod",
+            "entry": "golangci-lint-mod.sh",
+            "files": "(\\.go$)|(\\bgo\\.mod$)",
+            "exclude": "(^|/)vendor/",
+            "language": "script",
+            "description": "Run 'cd $(mod_root $FILE); golangci-lint run [$ARGS] ./...' for each staged .go file",
+            "pass_filenames": true,
+            "require_serial": true
+        },
+        {
+            "id": "golangci-lint-pkg",
+            "name": "golangci-lint-pkg",
+            "entry": "golangci-lint-pkg.sh",
+            "types": [
+                "go"
+            ],
+            "exclude": "(^|/)vendor/",
+            "language": "script",
+            "description": "Run 'golangci-lint run [$ARGS] ./$(dirname $FILE)' for each staged .go file",
+            "pass_filenames": true,
+            "require_serial": true
+        },
+        {
+            "id": "golangci-lint-repo-mod",
+            "name": "golangci-lint-repo-mod",
+            "entry": "golangci-lint-repo-mod.sh",
+            "files": "(\\.go$)|(\\bgo\\.mod$)",
+            "exclude": "(^|/)vendor/",
+            "language": "script",
+            "description": "Run 'cd $(mod_root); golangci-lint run [$ARGS] ./...' for each module in the repo",
+            "pass_filenames": false
+        },
+        {
+            "id": "golangci-lint-repo-pkg",
+            "name": "golangci-lint-repo-pkg",
+            "entry": "golangci-lint-repo-pkg.sh",
+            "types": [
+                "go"
+            ],
+            "exclude": "(^|/)vendor/",
+            "language": "script",
+            "description": "Run 'golangci-lint run [$ARGS] ./...' in repo root folder",
+            "pass_filenames": false
+        },
+        {
+            "id": "golangci-lint",
+            "name": "golangci-lint",
+            "entry": "golangci-lint.sh",
+            "types": [
+                "go"
+            ],
+            "exclude": "(^|/)vendor/",
+            "language": "script",
+            "description": "Run 'golangci-lint run [$ARGS] $FILE' for each staged .go file",
+            "pass_filenames": true
+        }
+    ],
+    "https://github.com/markdownlint/markdownlint": [
+        {
+            "id": "markdownlint",
+            "name": "Markdownlint",
+            "description": "Run markdownlint on your Markdown files",
+            "entry": "mdl",
+            "language": "ruby",
+            "files": "\\.(md|mdown|markdown)$"
+        }
+    ],
+    "https://github.com/jguttman94/pre-commit-gradle": [
+        {
+            "id": "gradle-check",
+            "name": "gradle check",
+            "description": "Runs java unit tests using gradle check",
+            "entry": "gradle-check",
+            "language": "python",
+            "pass_filenames": false
+        },
+        {
+            "id": "gradle-build",
+            "name": "gradle build",
+            "description": "Builds java project using \"gradle build\"",
+            "entry": "gradle-build",
+            "language": "python",
+            "pass_filenames": false
+        },
+        {
+            "id": "gradle-spotless",
+            "name": "gradle spotless",
+            "description": "Lints java project using \"gradle spotlessJavaCheck spotlessJavaApply\"",
+            "entry": "gradle-spotless",
+            "language": "python",
+            "pass_filenames": false
+        },
+        {
+            "id": "gradle-task",
+            "name": "gradle task",
+            "description": "Runs arbitrary gradle tasks for java project",
+            "entry": "gradle-task",
+            "language": "python",
+            "pass_filenames": false
+        }
+    ],
+    "https://github.com/Yelp/detect-secrets": [
+        {
+            "id": "detect-secrets",
+            "name": "Detect secrets",
+            "description": "Detects high entropy strings that are likely to be passwords.",
+            "entry": "detect-secrets-hook",
+            "args": [
+                "--base64-limit",
+                "4.5",
+                "--hex-limit",
+                "3"
+            ],
+            "language": "python",
+            "files": ".*"
+        }
+    ],
+    "https://github.com/dmitri-lerko/pre-commit-docker-kustomize": [
+        {
+            "id": "kustomize",
+            "name": "kustomize (via docker)",
+            "description": "kustomize provided by docker",
+            "entry": "kustomize build",
+            "language": "docker",
+            "args": [
+                "overlay/production-us"
+            ],
+            "always_run": true,
+            "pass_filenames": false
+        }
+    ],
+    "https://github.com/perltidy/perltidy": [
+        {
+            "id": "perltidy",
+            "name": "perltidy",
+            "description": "Run the perltidy source code formatter on Perl source files",
+            "minimum_pre_commit_version": "2.1.0",
+            "entry": "perltidy --nostandard-output --backup-and-modify-in-place",
+            "args": [
+                "--standard-error-output",
+                "--backup-file-extension=/"
+            ],
+            "language": "perl",
+            "types": [
+                "perl"
+            ]
+        }
+    ],
+    "https://github.com/talos-systems/conform": [
+        {
+            "id": "conform",
+            "name": "Conform",
+            "description": "Run 'conform enforce' for policy enforcement",
+            "entry": "conform enforce --commit-msg-file",
+            "language": "golang",
+            "stages": [
+                "commit-msg"
+            ]
+        }
+    ],
+    "https://github.com/twu/skjold": [
+        {
+            "id": "skjold",
+            "name": "skjold",
+            "description": "Security audit Python project dependencies against security advisory databases.",
+            "entry": "skjold audit",
+            "language": "python",
+            "language_version": "python3",
+            "require_serial": true,
+            "files": "^(poetry\\.lock|Pipfile\\.lock|requirements.*\\.txt)$"
+        }
+    ],
+    "https://github.com/woile/commitizen": [
+        {
+            "id": "commitizen",
+            "name": "commitizen check",
+            "description": "Check whether the commit message follows commiting rules",
+            "entry": "cz check --commit-msg-file",
+            "language": "python",
+            "language_version": "python3",
+            "require_serial": true,
+            "minimum_pre_commit_version": "0.15.4"
+        }
+    ],
+    "https://github.com/gherynos/pre-commit-java": [
+        {
+            "id": "pmd",
+            "name": "pmd",
+            "description": "Runs the PMD static code analyzer.",
+            "language": "docker",
+            "entry": "/bin/bash /opt/run_pmd.sh",
+            "files": "\\.java$",
+            "require_serial": true
+        },
+        {
+            "id": "cpd",
+            "name": "cpd",
+            "description": "Runs the Copy/Paste Detector (CPD).",
+            "language": "docker",
+            "entry": "/bin/bash /opt/run_cpd.sh",
+            "files": "\\.java$",
+            "require_serial": true
+        },
+        {
+            "id": "checkstyle",
+            "name": "checkstyle",
+            "description": "Runs the Checkstyle static code analysis tool.",
+            "language": "docker",
+            "entry": "/bin/bash /opt/run_checkstyle.sh",
+            "files": "\\.java$",
+            "require_serial": true
+        }
+    ],
+    "https://github.com/JamesWoolfenden/pre-commit": [
+        {
+            "id": "terraform-fmt",
+            "name": "terraform-fmt",
+            "entry": "terraform-fmt",
+            "description": "Rewrite Terraform configuration files to a canonical format and style, cross platform compatible",
+            "language": "python",
+            "files": "(\\.tf|\\.tfvars)$",
+            "exclude": "\\.terraform\\/.*$"
+        },
+        {
+            "id": "checkov-scan",
+            "name": "checkov",
+            "description": "runs checkov over a project, cross platform compatible",
+            "entry": "checkov-scan",
+            "language": "python",
+            "language_version": "python3.7",
+            "files": "(\\.tf)$",
+            "exclude": "\\.terraform\\/.*$",
+            "always_run": false,
+            "pass_filenames": false,
+            "verbose": true,
+            "additional_dependencies": [
+                "checkov"
+            ]
+        },
+        {
+            "id": "tf2docs",
+            "name": "tf2docs",
+            "description": "builds markdown docs, cross platform compatible",
+            "entry": "tf2docs",
+            "language": "python",
+            "language_version": "python3.7",
+            "files": "(\\.tf)$",
+            "exclude": "\\.terraform\\/.*$",
+            "always_run": false,
+            "pass_filenames": false,
+            "verbose": true
+        }
+    ],
+    "https://github.com/lietu/go-pre-commit": [
+        {
+            "id": "errcheck",
+            "name": "errcheck",
+            "entry": "go-pre-commit errcheck",
+            "files": "\\.go$",
+            "language": "system",
+            "description": "Check your Go source code with errcheck"
+        },
+        {
+            "id": "go-fmt-goimports",
+            "name": "go-fmt-goimports",
+            "entry": "go-pre-commit go-fmt-goimports",
+            "files": "\\.go$",
+            "language": "system",
+            "description": "Format your Go code with go fmt and goimports"
+        },
+        {
+            "id": "go-test",
+            "name": "go-test",
+            "entry": "go-pre-commit go-test",
+            "files": "\\.go$",
+            "language": "system",
+            "description": "Run your Go unit tests"
+        },
+        {
+            "id": "go-vet",
+            "name": "go-vet",
+            "entry": "go-pre-commit go-vet",
+            "files": "\\.go$",
+            "language": "system",
+            "description": "Check your Go source with go vet"
+        },
+        {
+            "id": "gofumports",
+            "name": "gofumports",
+            "entry": "go-pre-commit gofumports",
+            "files": "\\.go$",
+            "language": "system",
+            "description": "Format your Go code with gofumports"
+        },
+        {
+            "id": "gofumpt",
+            "name": "gofumpt",
+            "entry": "go-pre-commit gofumpt",
+            "files": "\\.go$",
+            "language": "system",
+            "description": "Format your Go code with gofumpt"
+        },
+        {
+            "id": "golangci-lint",
+            "name": "golangci-lint",
+            "entry": "go-pre-commit golangci-lint",
+            "files": "\\.go$",
+            "language": "system",
+            "description": "Check your Go code with golangci-lint"
+        },
+        {
+            "id": "golint",
+            "name": "golint",
+            "entry": "go-pre-commit golint",
+            "files": "\\.go$",
+            "language": "system",
+            "description": "Check your Go code with golint"
+        },
+        {
+            "id": "staticcheck",
+            "name": "staticcheck",
+            "entry": "go-pre-commit staticcheck",
+            "files": "\\.go$",
+            "language": "system",
+            "description": "Check your Go code with staticcheck"
+        }
+    ],
+    "https://github.com/macisamuele/language-formatters-pre-commit-hooks": [
+        {
+            "id": "pretty-format-golang",
+            "name": "Go Formatter",
+            "description": "Runs gofmt over golang source files.",
+            "entry": "pretty-format-golang",
+            "language": "python",
+            "types": [
+                "go"
+            ],
+            "files": "^.+\\.go$",
+            "minimum_pre_commit_version": "0.15.0"
+        },
+        {
+            "id": "pretty-format-ini",
+            "name": "Pretty format INI",
+            "description": "This hook sets a standard for formatting INI  files.",
+            "entry": "pretty-format-ini",
+            "language": "python",
+            "types": [
+                "ini"
+            ],
+            "files": "^.*\\.ini$",
+            "minimum_pre_commit_version": "0.15.0"
+        },
+        {
+            "id": "pretty-format-java",
+            "name": "Google Java Formatter",
+            "description": "Runs Google Java Formatter over Java source files",
+            "entry": "pretty-format-java",
+            "language": "python",
+            "types": [
+                "java"
+            ],
+            "files": "^.+\\.java$",
+            "minimum_pre_commit_version": "0.15.0"
+        },
+        {
+            "id": "pretty-format-kotlin",
+            "name": "KTLint",
+            "description": "Runs KTLint over Kotlin source files",
+            "entry": "pretty-format-kotlin",
+            "language": "python",
+            "types": [
+                "kotlin"
+            ],
+            "files": "^.+\\.kt$",
+            "minimum_pre_commit_version": "0.15.0",
+            "require_serial": true
+        },
+        {
+            "id": "pretty-format-rust",
+            "name": "cargo-fmt",
+            "description": "Runs cargo fmt over Rust source files",
+            "entry": "pretty-format-rust",
+            "language": "python",
+            "types": [
+                "rust"
+            ],
+            "files": "^.+\\.rs$",
+            "minimum_pre_commit_version": "0.15.0"
+        },
+        {
+            "id": "pretty-format-toml",
+            "name": "Pretty format TOML",
+            "description": "This hook sets a standard for formatting TOML files.",
+            "entry": "pretty-format-toml",
+            "language": "python",
+            "types": [
+                "toml"
+            ],
+            "files": "^.*\\.toml$",
+            "minimum_pre_commit_version": "0.15.0"
+        },
+        {
+            "id": "pretty-format-yaml",
+            "name": "Pretty format YAML",
+            "description": "This hook sets a standard for formatting YAML files.",
+            "entry": "pretty-format-yaml",
+            "language": "python",
+            "types": [
+                "yaml"
+            ],
+            "files": "^.*\\.(yaml|yml)$",
+            "minimum_pre_commit_version": "0.15.0"
+        }
+    ],
+    "https://github.com/jlebar/pre-commit-hooks": [
+        {
+            "id": "bazel-buildifier",
+            "name": "bazel buildifier",
+            "description": "Runs `buildifier`, requires buildifier binary",
+            "entry": "buildifier",
+            "files": "^(.*/)?(BUILD\\.bazel|BUILD)$|\\.BUILD$",
+            "language": "system"
+        },
+        {
+            "id": "do-not-submit",
+            "name": "DO NOT SUBMIT",
+            "description": "Forbids the string \"DO NOT SUBMIT\".",
+            "entry": "check_do_not_submit.py",
+            "language": "script",
+            "files": ".*"
+        },
+        {
+            "id": "clang-format",
+            "name": "clang-format",
+            "entry": "clang_format.py",
+            "language": "script",
+            "require_serial": true
+        }
+    ],
+    "https://github.com/jazzband/pip-tools": [
+        {
+            "id": "pip-compile",
+            "name": "pip-compile",
+            "description": "Automatically compile requirements.",
+            "entry": "pip-compile",
+            "language": "python",
+            "files": "^requirements\\.(in|txt)$",
+            "pass_filenames": false
+        }
+    ],
+    "https://github.com/pappasam/toml-sort": [
+        {
+            "id": "toml-sort",
+            "name": "toml-sort",
+            "entry": "toml-sort",
+            "args": [
+                "--check"
+            ],
+            "language": "python",
+            "types": [
+                "toml"
+            ]
+        }
+    ],
+    "https://github.com/arenadotio/pre-commit-ocamlformat": [
+        {
+            "id": "ocamlformat",
+            "name": "ocamlformat",
+            "description": "Auto-formatter for OCaml code",
+            "entry": "ocamlformat",
+            "language": "system",
+            "files": "\\.mli?$",
+            "args": [
+                "-i"
+            ]
+        }
+    ],
+    "https://github.com/myint/rstcheck": [
+        {
+            "id": "rstcheck",
+            "name": "rstcheck",
+            "entry": "rstcheck",
+            "language": "python",
+            "types": [
+                "rst"
             ]
         }
     ]
