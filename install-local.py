@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from __future__ import absolute_import
+from __future__ import print_function
 from __future__ import unicode_literals
 
 import contextlib
@@ -23,11 +24,11 @@ if False:
 
 
 TGZ = (
-    'https://pypi.python.org/packages/d4/0c/'
-    '9840c08189e030873387a73b90ada981885010dd9aea134d6de30cd24cb8/'
-    'virtualenv-15.1.0.tar.gz'
+    'https://files.pythonhosted.org/packages/a4/e3/'
+    '1f067de470e3a86875ed915438dc3bd781fb0346254f541190a09472b677/'
+    'virtualenv-16.7.10.tar.gz'
 )
-CHECKSUM = '02f8102c2436bb03b3ee6dede1919d1dac8a427541652e5ec95171ec8adbc93a'
+CHECKSUM = 'e88fdcb08b0ecb11da97868f463dd06275923f50d87f4b9c8b2fc0994eec40f4'
 PKG_PATH = '/tmp/.virtualenv-pkg'
 
 
@@ -60,7 +61,7 @@ def virtualenv(path):
             'Got {}, expected {}.'.format(checksum, CHECKSUM),
             file=sys.stderr,
         )
-        return False
+        return 1
 
     tar_stream = io.BytesIO(tar_bytes)
     with contextlib.closing(tarfile.open(fileobj=tar_stream)) as tarfile_obj:
@@ -76,7 +77,6 @@ def virtualenv(path):
         return subprocess.call((
             sys.executable, os.path.join(PKG_PATH, 'virtualenv.py'), path,
         ))
-    return True
 
 
 def main():
@@ -94,7 +94,7 @@ def main():
         print('Cleaned ~/.pre-commit-venv ~/bin/pre-commit')
         return 0
 
-    if not virtualenv(venv_path):
+    if virtualenv(venv_path):
         return 1
 
     subprocess.check_call((
